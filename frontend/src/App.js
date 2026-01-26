@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
 import TicketsList from "./pages/TicketsList";
 import TicketDetail from "./pages/TicketDetail";
 import TicketForm from "./pages/TicketForm";
@@ -10,6 +11,8 @@ function App() {
         <Route path="/" element={<TicketsList />} />
         <Route path="/tickets/:id" element={<TicketDetail />} />
         <Route path="/new" element={<TicketForm />} />
+        <Route path="/tickets/:id/edit" element={<TicketForm />} />
+
       </Routes>
     </Router>
   );

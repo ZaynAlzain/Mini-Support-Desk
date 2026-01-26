@@ -1,29 +1,58 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import api from "../api/api";
 
 function TicketForm() {
+  const { id } = useParams(); // if exists → edit mode
+  const navigate = useNavigate();
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState("medium");
+  const [status, setStatus] = useState("open");
+  const [loading, setLoading] = useState(false);
 
-  const navigate = useNavigate();
+  const isEdit = Boolean(id);
+
+  // Load ticket when editing
+  useEffect(() => {
+    if (isEdit) {
+      setLoading(true);
+      api.get(`/tickets/${id}`)
+        .then(res => {
+          setTitle(res.data.title);
+          setDescription(res.data.description || "");
+          setPriority(res.data.priority);
+          setStatus(res.data.status);
+        })
+        .finally(() => setLoading(false));
+    }
+  }, [id, isEdit]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    api.post("/tickets", {
+    const payload = {
       title,
       description,
-      priority
-    })
-    .then(() => navigate("/"))
-    .catch(err => console.error(err));
+      priority,
+      status
+    };
+
+    if (isEdit) {
+      api.put(`/tickets/${id}`, payload)
+        .then(() => navigate(`/tickets/${id}`));
+    } else {
+      api.post("/tickets", payload)
+        .then(() => navigate("/"));
+    }
   };
+
+  if (loading) return <p>Loading...</p>;
 
   return (
     <form onSubmit={handleSubmit}>
-      <h2>Create Ticket</h2>
+      <h2>{isEdit ? "Edit Ticket" : "Create Ticket"}</h2>
 
       <input
         placeholder="Title"
@@ -38,16 +67,21 @@ function TicketForm() {
         onChange={e => setDescription(e.target.value)}
       />
 
-      <select
-        value={priority}
-        onChange={e => setPriority(e.target.value)}
-      >
+      <select value={priority} onChange={e => setPriority(e.target.value)}>
         <option value="low">Low</option>
         <option value="medium">Medium</option>
         <option value="high">High</option>
       </select>
 
-      <button type="submit">Create</button>
+      <select value={status} onChange={e => setStatus(e.target.value)}>
+        <option value="open">Open</option>
+        <option value="in_progress">In Progress</option>
+        <option value="resolved">Resolved</option>
+      </select>
+
+      <button type="submit">
+        {isEdit ? "Update Ticket" : "Create Ticket"}
+      </button>
     </form>
   );
 }

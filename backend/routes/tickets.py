@@ -6,21 +6,46 @@ tickets_bp = Blueprint("tickets", __name__)
 
 @tickets_bp.route("/api/tickets", methods=["GET"])
 def get_tickets():
-    tickets = Ticket.query.all()
+    query = Ticket.query
 
-    result = []
-    for t in tickets:
-        result.append({
-            "id": t.id,
-            "title": t.title,
-            "description": t.description,
-            "status": t.status,
-            "priority": t.priority,
-            "created_at": t.created_at,
-            "updated_at": t.updated_at
-        })
+    # SEARCH
+    q = request.args.get("q")
+    if q:
+        query = query.filter(
+            Ticket.title.ilike(f"%{q}%") |
+            Ticket.description.ilike(f"%{q}%")
+        )
 
-    return jsonify(result), 200
+    # FILTERS
+    status = request.args.get("status")
+    if status:
+        query = query.filter(Ticket.status == status)
+
+    priority = request.args.get("priority")
+    if priority:
+        query = query.filter(Ticket.priority == priority)
+
+    # SORTING
+    sort = request.args.get("sort", "created_at")
+    order = request.args.get("order", "desc")
+
+    column = getattr(Ticket, sort, Ticket.created_at)
+    if order == "asc":
+        query = query.order_by(column.asc())
+    else:
+        query = query.order_by(column.desc())
+
+    tickets = query.all()
+
+    return [{
+        "id": t.id,
+        "title": t.title,
+        "description": t.description,
+        "status": t.status,
+        "priority": t.priority,
+        "created_at": t.created_at,
+        "updated_at": t.updated_at
+    } for t in tickets], 200
 
 
 @tickets_bp.route("/api/tickets/<int:ticket_id>", methods=["GET"])
@@ -40,6 +65,19 @@ def get_ticket(ticket_id):
         "updated_at": ticket.updated_at
     }, 200
 
+@tickets_bp.route("/api/tickets/<int:ticket_id>", methods=["DELETE"])
+def delete_ticket(ticket_id):
+    ticket = Ticket.query.get(ticket_id)
+
+    if not ticket:
+        return {"error": "Ticket not found"}, 404
+
+    db.session.delete(ticket)
+    db.session.commit()
+
+    return {"message": "Ticket deleted"}, 200
+
+
 @tickets_bp.route("/api/tickets", methods=["POST"])
 def create_ticket():
     data = request.json
@@ -57,7 +95,10 @@ def create_ticket():
     db.session.add(ticket)
     db.session.commit()
 
-    return {"message": "Ticket created", "id": ticket.id}, 201
+    return {
+        "id": ticket.id,
+        "message": "Ticket created"
+    }, 201
 
 @tickets_bp.route("/api/tickets/<int:ticket_id>", methods=["PUT"])
 def update_ticket(ticket_id):
@@ -68,24 +109,30 @@ def update_ticket(ticket_id):
 
     data = request.json
 
-    ticket.title = data.get("title", ticket.title)
-    ticket.description = data.get("description", ticket.description)
-    ticket.status = data.get("status", ticket.status)
-    ticket.priority = data.get("priority", ticket.priority)
+    if not data:
+        return {"error": "No data provided"}, 400
+
+    # Update fields if present
+    if "title" in data:
+        ticket.title = data["title"]
+
+    if "description" in data:
+        ticket.description = data["description"]
+
+    if "status" in data:
+        ticket.status = data["status"]
+
+    if "priority" in data:
+        ticket.priority = data["priority"]
+
+    # Update timestamp
     ticket.updated_at = datetime.utcnow()
 
     db.session.commit()
 
-    return {"message": "Ticket updated"}, 200
+    return {
+        "message": "Ticket updated",
+        "id": ticket.id
+    }, 200
 
-@tickets_bp.route("/api/tickets/<int:ticket_id>", methods=["DELETE"])
-def delete_ticket(ticket_id):
-    ticket = Ticket.query.get(ticket_id)
 
-    if not ticket:
-        return {"error": "Ticket not found"}, 404
-
-    db.session.delete(ticket)
-    db.session.commit()
-
-    return {"message": "Ticket deleted"}, 200
