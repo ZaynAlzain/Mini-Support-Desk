@@ -1,0 +1,58 @@
+h2 {
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.ticket-title {
+  margin-top: 10px;
+  margin-bottom: 8px;
+}
+
+.ticket-meta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.ticket-date {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.ticket-description {
+  background-color: #f9fafb;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.comments-section {
+  margin-top: 20px;
+}
+
+.comments-section ul {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 15px;
+}
+
+.comments-section li {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.comments-section li:last-child {
+  border-bottom: none;
+}
+
+.comments-section small {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.comments-section textarea {
+  min-height: 70px;
+}

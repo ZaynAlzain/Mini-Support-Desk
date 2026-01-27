@@ -1,0 +1,128 @@
+h1 {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+
+.ticket-item {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+  border-radius: 6px;
+}
+
+.ticket-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 20px;
+}
+
+.ticket-item:hover {
+  background-color: #f1f5f9;
+  transform: translateY(-1px);
+  
+}
+
+.ticket-item:last-child {
+  border-bottom: none;
+}
+
+.ticket-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ticket-left a {
+  font-weight: 500;
+  position: relative;
+  transition: color 0.2s ease, padding-left 0.15s ease;
+}
+
+.ticket-left a:hover {
+  color: #101216;
+  padding-left: 2px;
+}
+
+
+.ticket-menu {
+  position: relative;
+}
+
+
+.menu-button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.menu-button:hover {
+  background-color: #e5e7eb;
+  transform: scale(1.05);
+}
+
+
+.menu-button:active {
+  transform: scale(0.95);
+}
+
+.menu-button:focus {
+  outline: none;
+  background-color: #e5e7eb;
+}
+
+.menu-dropdown {
+  position: absolute;
+  right: 0;
+  top: 28px;
+  background: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  min-width: 150px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-dropdown a,
+.menu-dropdown button {
+  width: 100%;
+  padding: 8px 12px;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.15s ease, padding-left 0.15s ease;
+}
+
+.menu-dropdown a:hover,
+.menu-dropdown button:hover {
+  background-color: #f3f4f6;
+  padding-left: 14px;
+}
+
+.menu-delete {
+  color: #dc2626;
+}
+
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.filters .input {
+  width: auto;
+  min-width: 150px;
+}
