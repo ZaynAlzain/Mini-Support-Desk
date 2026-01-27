@@ -7,67 +7,106 @@ function TicketDetail() {
   const [newComment, setNewComment] = useState("");
   const { id } = useParams();
   const [ticket, setTicket] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    
     api.get(`/tickets/${id}`)
-      .then(res => setTicket(res.data))
-      .catch(err => console.error(err));
+      .then(res => {
+        setTicket(res.data);
+        setLoading(false);
+      });
 
+    
     api.get(`/tickets/${id}/comments`)
-    .then(res => setComments(res.data));
-
+      .then(res => {
+        setComments(res.data);
+      });
   }, [id]);
 
-  if (!ticket) return <p>Loading ticket...</p>;
+  const handleAddComment = (e) => {
+    e.preventDefault();
+
+    if (!newComment.trim()) return;
+
+    api.post(`/tickets/${id}/comments`, {
+      content: newComment
+    })
+      .then(res => {
+        setComments(prev => [...prev, res.data]);
+        setNewComment("");
+      });
+  };
+
+  if (loading) return <p>Loading ticket...</p>;
+
+  if (!ticket) return <p>Ticket not found</p>;
 
   return (
-    <div>
-            <h3>Comments</h3>
+   <div className="container">
+      <Link to="/">← Back to tickets</Link>
 
-          <Link to={`/tickets/${ticket.id}/edit`}>
-          ✏️ Edit Ticket
-          </Link>
+      <h2 className="ticket-title" >{ticket.title}</h2>
 
+      <p className="ticket-description" >{ticket.description || "No description provided."}</p>
 
+      <div className="ticket-meta" style={{ marginBottom: "10px" }}>
+        <span className={`badge status ${ticket.status}`}>
+          {ticket.status.replace("_", " ").toUpperCase()}
+        </span>
+
+        <span className={`badge ${ticket.priority}`}>
+          {ticket.priority.toUpperCase()}
+        </span>
+      </div>
+
+      <p className="ticket-date" >
+        <strong>Created:</strong>{" "}
+        {new Date(ticket.created_at).toLocaleString()}
+      </p>
+
+      <hr />
+
+      <div className="comments-section" >
+      <h3 >Comments</h3>
+      </div>
       {comments.length === 0 ? (
-        <p>No comments yet</p>
+        <p>No comments yet.</p>
       ) : (
         <ul>
           {comments.map(c => (
             <li key={c.id}>
-              <strong>{c.author_name}:</strong> {c.body}
+              {c.content}
+              <br />
+              <small>
+                {new Date(c.created_at).toLocaleString()}
+              </small>
             </li>
           ))}
         </ul>
       )}
 
-          <form
-      onSubmit={(e) => {
-        e.preventDefault();
+      <form onSubmit={handleAddComment}>
+        <textarea
+          className="input"
+          placeholder="Add a comment..."
+          value={newComment}
+          onChange={e => setNewComment(e.target.value)}
+        />
 
-        api.post(`/tickets/${id}/comments`, {
-          author_name: "User",
-          body: newComment
-        })
-        .then(() => {
-          setNewComment("");
-          return api.get(`/tickets/${id}/comments`);
-        })
-        .then(res => setComments(res.data));
-      }}
-    >
-      <input
-        placeholder="Add comment..."
-        value={newComment}
-        onChange={e => setNewComment(e.target.value)}
-      />
-      <button type="submit">Add</button>
-    </form>
+        <button className="button primary" type="submit">
+          Add Comment
+        </button>
+      </form>
 
+      <hr />
 
-      <Link to="/">⬅ Back</Link>
+      <Link to={`/tickets/${id}/edit`}>
+        ✏️ Edit Ticket
+      </Link>
     </div>
   );
 }
+
 
 export default TicketDetail;

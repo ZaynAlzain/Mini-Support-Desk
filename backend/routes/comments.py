@@ -10,7 +10,7 @@ def get_comments(ticket_id):
     return [{
         "id": c.id,
         "author_name": c.author_name,
-        "body": c.body,
+        "content": c.body,
         "created_at": c.created_at
     } for c in comments], 200
 
@@ -22,13 +22,21 @@ def add_comment(ticket_id):
 
     data = request.json
 
+    if not data or not data.get("content"):
+        return {"error": "Comment content is required"}, 400
+
     comment = Comment(
         ticket_id=ticket_id,
         author_name=data.get("author_name", "Anonymous"),
-        body=data.get("body", "")
+        body=data["content"]   # ✅ THIS IS THE FIX
     )
 
     db.session.add(comment)
     db.session.commit()
 
-    return {"message": "Comment added"}, 201
+    return {
+        "id": comment.id,
+        "content": comment.body,
+        "author_name": comment.author_name,
+        "created_at": comment.created_at.isoformat()
+    }, 201

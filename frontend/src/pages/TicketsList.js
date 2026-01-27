@@ -13,10 +13,12 @@ function TicketsList() {
   const [order, setOrder] = useState("desc");
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true); 
-const [initialized, setInitialized] = useState(false);
+  const [initialized, setInitialized] = useState(false);
+  const [openMenuId, setOpenMenuId] = useState(null);
+
 
  useEffect(() => {
-  // Only show loading spinner on FIRST load
+  
   if (!initialized) {
     setLoading(true);
   }
@@ -46,13 +48,13 @@ const [initialized, setInitialized] = useState(false);
   if (loading) return <p>Loading tickets...</p>;
 
   return (
-  <div>
+  <div className="container">
     <h1>Tickets</h1>
 
     <Link to="/new" style={{ display: "inline-block", marginBottom: "10px" }}>
   ➕ Add Ticket
     </Link>
-    
+    <div className="filters">
     <input
       placeholder="Search tickets..."
       value={search}
@@ -82,53 +84,92 @@ const [initialized, setInitialized] = useState(false);
       <option value="desc">Newest First</option>
       <option value="asc">Oldest First</option>
     </select>
+    </div>
 
     {loading ? (
       <p>Loading tickets...</p>
     ) : tickets.length === 0 ? (
       <p>No tickets found</p>
     ) : (
-      <ul>
+     <ul className="ticket-list">
   {tickets.map(ticket => (
-    <li key={ticket.id}>
-      <Link to={`/tickets/${ticket.id}`}>
-        {ticket.title} ({ticket.status})
-      </Link>
+    <li className="ticket-item" key={ticket.id}>
 
-      {/* OVERDUE BADGE — THIS GOES HERE */}
-      {isOverdue(ticket) && (
-        <span style={{ color: "red", marginLeft: "8px" }}>
-          OVERDUE
+      
+      <div className="ticket-left">
+        <Link to={`/tickets/${ticket.id}`}>
+          {ticket.title}
+        </Link>
+
+        
+        <span className={`badge status ${ticket.status}`}>
+          {ticket.status.replace("_", " ").toUpperCase()}
         </span>
-      )}
 
-      <button
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
+        
+        {isOverdue(ticket) && (
+          <span className="badge overdue">
+            OVERDUE
+          </span>
+        )}
 
-          if (window.confirm("Delete this ticket?")) {
-            api.delete(`/tickets/${ticket.id}`)
-              .then(() => {
-                setTickets(prev =>
-                  prev.filter(t => t.id !== ticket.id)
-                );
-              });
-          }
-        }}
-        style={{ marginLeft: "10px" }}
-      >
-        Delete
-      </button>
+        
+        <span className={`badge ${ticket.priority}`}>
+          {ticket.priority.toUpperCase()}
+        </span>
+      </div>
+
+      
+      <div className="ticket-menu">
+        <button
+          className="menu-button"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setOpenMenuId(openMenuId === ticket.id ? null : ticket.id);
+          }}
+        >
+          ⋮
+        </button>
+
+        {openMenuId === ticket.id && (
+          <div className="menu-dropdown">
+            <Link to={`/tickets/${ticket.id}/edit`}>
+              ✏️ Edit
+            </Link>
+
+            <Link to={`/tickets/${ticket.id}`}>
+              💬 Add Comment
+            </Link>
+
+            <button
+              className="menu-delete"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                if (window.confirm("Delete this ticket?")) {
+                  api.delete(`/tickets/${ticket.id}`).then(() => {
+                    setTickets(prev =>
+                      prev.filter(t => t.id !== ticket.id)
+                    );
+                    setOpenMenuId(null);
+                  });
+                }
+              }}
+            >
+              🗑️ Delete
+            </button>
+          </div>
+        )}
+      </div>
+
     </li>
   ))}
 </ul>
 
+
     )}
-
-    
-    
-
 
   </div>
 );
