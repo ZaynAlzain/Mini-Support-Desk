@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../api/api";
+import "./TicketForm.css";
 
 function TicketForm() {
   const { id } = useParams(); // if exists → edit mode

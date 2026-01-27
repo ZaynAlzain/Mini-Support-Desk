@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import api from "../api/api";
+import "./TicketDetail.css";
+
 
 function TicketDetail() {
   const [comments, setComments] = useState([]);

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../api/api";
-
+import "./TicketsList.css";
 
 
 
@@ -15,10 +15,15 @@ function TicketsList() {
   const [loading, setLoading] = useState(true); 
   const [initialized, setInitialized] = useState(false);
   const [openMenuId, setOpenMenuId] = useState(null);
+  const [overdueOnly, setOverdueOnly] = useState(false);
+  const [page, setPage] = useState(1);
+  const limit = 5;
+  const [total, setTotal] = useState(0);
+
 
 
  useEffect(() => {
-  
+
   if (!initialized) {
     setLoading(true);
   }
@@ -29,11 +34,14 @@ function TicketsList() {
       status: status || undefined,
       priority: priority || undefined,
       sort,
-      order
+      order,
+      page,
+      limit
     }
   })
     .then(res => {
-      setTickets(res.data);
+      setTickets(res.data.items);
+      setTotal(res.data.total);
       setLoading(false);
       setInitialized(true);
     })
@@ -42,8 +50,31 @@ function TicketsList() {
       setInitialized(true);
     });
 
-}, [search, status, priority, sort, order, initialized]);
+}, [search, status, priority, sort, order, page, initialized]);
 
+useEffect(() => {
+  setPage(1);
+}, [search, status, priority, overdueOnly]);
+
+const totalPages = Math.ceil(total / limit);
+
+
+useEffect(() => {
+  function handleClickOutside() {
+    setOpenMenuId(null);
+  }
+
+  document.addEventListener("click", handleClickOutside);
+
+  return () => {
+    document.removeEventListener("click", handleClickOutside);
+  };
+}, []);
+
+  const visibleTickets = tickets.filter(ticket => {
+  if (!overdueOnly) return true;
+  return isOverdue(ticket);
+  });
 
   if (loading) return <p>Loading tickets...</p>;
 
@@ -52,39 +83,104 @@ function TicketsList() {
     <h1>Tickets</h1>
 
     <Link to="/new" style={{ display: "inline-block", marginBottom: "10px" }}>
-  ➕ Add Ticket
+      ➕ Add Ticket
     </Link>
-    <div className="filters">
+    
+  <div className="filters-bar">
+    <div className="filters-left">
     <input
       placeholder="Search tickets..."
       value={search}
       onChange={e => setSearch(e.target.value)}
     />
 
-    <select value={status} onChange={e => setStatus(e.target.value)}>
+    <select
+        className={`filter-select ${status ? "active" : ""}`}
+        value={status}
+        onChange={(e) => setStatus(e.target.value)}
+    >
       <option value="">All Statuses</option>
       <option value="open">Open</option>
       <option value="in_progress">In Progress</option>
       <option value="resolved">Resolved</option>
-    </select>
+      </select>
 
-    <select value={priority} onChange={e => setPriority(e.target.value)}>
+    <select
+        className={`filter-select ${priority ? "active" : ""}`}
+        value={priority}
+        onChange={(e) => setPriority(e.target.value)}
+    >
       <option value="">All Priorities</option>
       <option value="low">Low</option>
       <option value="medium">Medium</option>
       <option value="high">High</option>
     </select>
 
-    <select value={sort} onChange={e => setSort(e.target.value)}>
-      <option value="created_at">Created At</option>
-      <option value="updated_at">Updated At</option>
-    </select>
+   <button
+  className={`filter-select ${overdueOnly ? "active" : ""}`}
+  onClick={() => setOverdueOnly(prev => !prev)}
+>
+  Overdue
+</button>
 
-    <select value={order} onChange={e => setOrder(e.target.value)}>
-      <option value="desc">Newest First</option>
-      <option value="asc">Oldest First</option>
-    </select>
     </div>
+
+
+  <div className="filters-right">
+     <span className="view-label">View:</span> 
+     <button
+    className={`view-pill ${sort !== "created_at" ? "active" : ""}`}
+    onClick={() =>
+      setSort(prev =>
+        prev === "created_at" ? "updated_at" : "created_at"
+      )
+    }
+  >
+    {sort === "created_at" ? "Created" : "Updated"}
+  </button>
+
+    <button
+    className={`view-pill ${order === "asc" ? "active" : ""}`}
+    onClick={() =>
+      setOrder(prev => (prev === "desc" ? "asc" : "desc"))
+    }
+  >
+    {order === "desc" ? "Newest" : "Oldest"}
+  </button>
+  </div>
+
+</div>
+  <div className="active-filters">
+    {status && (
+      <span className="filter-chip">
+        Status: {status.replace("_", " ")}
+        <button onClick={() => setStatus("")}>×</button>
+      </span>
+    )}
+
+    {priority && (
+      <span className="filter-chip">
+        Priority: {priority}
+        <button onClick={() => setPriority("")}>×</button>
+      </span>
+    )}
+
+    {search && (
+      <span className="filter-chip">
+        Search: "{search}"
+        <button onClick={() => setSearch("")}>×</button>
+      </span>
+    )}
+
+    {overdueOnly && (
+     <span className="filter-chip">
+       Overdue
+      <button onClick={() => setOverdueOnly(false)}>×</button>
+    </span>
+)}
+    
+  </div>
+
 
     {loading ? (
       <p>Loading tickets...</p>
@@ -92,8 +188,11 @@ function TicketsList() {
       <p>No tickets found</p>
     ) : (
      <ul className="ticket-list">
-  {tickets.map(ticket => (
-    <li className="ticket-item" key={ticket.id}>
+    {visibleTickets.map(ticket => (
+
+    <li className={`ticket-item ${
+    openMenuId === ticket.id ? "menu-open" : ""
+    }`} key={ticket.id}>
 
       
       <div className="ticket-left">
@@ -133,7 +232,7 @@ function TicketsList() {
         </button>
 
         {openMenuId === ticket.id && (
-          <div className="menu-dropdown">
+          <div className="menu-dropdown" onClick={(e) => e.stopPropagation()}>
             <Link to={`/tickets/${ticket.id}/edit`}>
               ✏️ Edit
             </Link>
@@ -167,9 +266,28 @@ function TicketsList() {
     </li>
   ))}
 </ul>
+ )}
 
+ <div className="pagination">
+  <button
+    disabled={page === 1}
+    onClick={() => setPage(p => p - 1)}
+  >
+    Previous
+  </button>
 
-    )}
+  <span>
+    Page {page} of {totalPages || 1}
+  </span>
+
+  <button
+    disabled={page === totalPages}
+    onClick={() => setPage(p => p + 1)}
+  >
+    Next
+  </button>
+</div>
+
 
   </div>
 );

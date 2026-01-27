@@ -35,17 +35,30 @@ def get_tickets():
     else:
         query = query.order_by(column.desc())
 
-    tickets = query.all()
+    # Pagination
+        page = int(request.args.get("page", 1))
+        limit = int(request.args.get("limit", 5))
 
-    return [{
-        "id": t.id,
-        "title": t.title,
-        "description": t.description,
-        "status": t.status,
-        "priority": t.priority,
-        "created_at": t.created_at,
-        "updated_at": t.updated_at
-    } for t in tickets], 200
+        total = query.count()
+        tickets = query.offset((page - 1) * limit).limit(limit).all()
+
+        return {
+            "items": [
+                {
+                    "id": t.id,
+                    "title": t.title,
+                    "description": t.description,
+                    "status": t.status,
+                    "priority": t.priority,
+                    "created_at": t.created_at,
+                    "updated_at": t.updated_at
+                }
+                for t in tickets
+            ],
+            "page": page,
+            "limit": limit,
+            "total": total
+        }, 200
 
 
 @tickets_bp.route("/api/tickets/<int:ticket_id>", methods=["GET"])
