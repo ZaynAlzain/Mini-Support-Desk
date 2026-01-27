@@ -16,6 +16,9 @@ function TicketsList() {
   const [initialized, setInitialized] = useState(false);
   const [openMenuId, setOpenMenuId] = useState(null);
   const [overdueOnly, setOverdueOnly] = useState(false);
+  const [page, setPage] = useState(1);
+  const limit = 5;
+  const [total, setTotal] = useState(0);
 
 
 
@@ -31,11 +34,14 @@ function TicketsList() {
       status: status || undefined,
       priority: priority || undefined,
       sort,
-      order
+      order,
+      page,
+      limit
     }
   })
     .then(res => {
-      setTickets(res.data);
+      setTickets(res.data.items);
+      setTotal(res.data.total);
       setLoading(false);
       setInitialized(true);
     })
@@ -44,7 +50,14 @@ function TicketsList() {
       setInitialized(true);
     });
 
-}, [search, status, priority, sort, order, initialized]);
+}, [search, status, priority, sort, order, page, initialized]);
+
+useEffect(() => {
+  setPage(1);
+}, [search, status, priority, overdueOnly]);
+
+const totalPages = Math.ceil(total / limit);
+
 
 useEffect(() => {
   function handleClickOutside() {
@@ -253,9 +266,28 @@ useEffect(() => {
     </li>
   ))}
 </ul>
+ )}
 
+ <div className="pagination">
+  <button
+    disabled={page === 1}
+    onClick={() => setPage(p => p - 1)}
+  >
+    Previous
+  </button>
 
-    )}
+  <span>
+    Page {page} of {totalPages || 1}
+  </span>
+
+  <button
+    disabled={page === totalPages}
+    onClick={() => setPage(p => p + 1)}
+  >
+    Next
+  </button>
+</div>
+
 
   </div>
 );
