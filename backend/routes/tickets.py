@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from models import db, Ticket
-from datetime import datetime
+from datetime import datetime, timedelta
 
 tickets_bp = Blueprint("tickets", __name__)
 
@@ -29,21 +29,36 @@ def get_tickets():
     sort = request.args.get("sort", "created_at")
     order = request.args.get("order", "desc")
 
-    column = getattr(Ticket, sort, Ticket.created_at)
+    if sort not in ["created_at", "updated_at"]:
+        sort = "created_at"
+
+    column = getattr(Ticket, sort)
+
     if order == "asc":
         query = query.order_by(column.asc())
     else:
         query = query.order_by(column.desc())
 
+    # OVERDUE FILTER
+    overdue = request.args.get("overdue")
+
+    if overdue == "true":
+        cutoff = datetime.utcnow() - timedelta(hours=72)
+
+        query = query.filter(
+            Ticket.status != "resolved",
+            Ticket.created_at < cutoff
+        )
+
     # Pagination
-        page = int(request.args.get("page", 1))
-        limit = int(request.args.get("limit", 5))
+    page = int(request.args.get("page", 1))
+    limit = int(request.args.get("limit", 5))
 
-        total = query.count()
-        tickets = query.offset((page - 1) * limit).limit(limit).all()
+    total = query.count()
+    tickets = query.offset((page - 1) * limit).limit(limit).all()
 
-        return {
-            "items": [
+    return {
+        "items": [
                 {
                     "id": t.id,
                     "title": t.title,
@@ -59,6 +74,9 @@ def get_tickets():
             "limit": limit,
             "total": total
         }, 200
+    
+
+   
 
 
 @tickets_bp.route("/api/tickets/<int:ticket_id>", methods=["GET"])
