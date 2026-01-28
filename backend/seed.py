@@ -32,14 +32,14 @@ def seed_tickets():
         description="Minor spelling issue in hero section",
         status="open",
         priority="low",
-        created_at=now - timedelta(hours=6)
+        created_at=now - timedelta(hours=2)
     ),
     Ticket(
         title="Password reset email not sent",
         description="Email service not responding",
         status="resolved",
         priority="high",
-        created_at=now - timedelta(days=10)
+        created_at=now - timedelta(days=2)
     ),
     Ticket(
         title="Profile picture upload fails",
@@ -60,21 +60,21 @@ def seed_tickets():
         description="Search API does not match keywords correctly",
         status="open",
         priority="high",
-        created_at=now - timedelta(days=6)  # OVERDUE
+        created_at=now - timedelta(days=1)  
     ),
     Ticket(
         title="Notifications delayed",
         description="Push notifications arrive minutes late",
         status="resolved",
         priority="medium",
-        created_at=now - timedelta(days=3)
+        created_at=now - timedelta(days=2)
     ),
     Ticket(
         title="Settings page crashes",
         description="500 error when accessing settings",
         status="open",
         priority="high",
-        created_at=now - timedelta(days=7)  # OVERDUE
+        created_at=now - timedelta(days=7)  
     ),
     Ticket(
         title="Dark mode request",
@@ -88,21 +88,21 @@ def seed_tickets():
         description="Reports API times out under load",
         status="in_progress",
         priority="high",
-        created_at=now - timedelta(days=8)  # OVERDUE
+        created_at=now - timedelta(days=8)  
     ),
     Ticket(
         title="Email verification broken",
         description="Verification links expired too early",
         status="open",
         priority="medium",
-        created_at=now - timedelta(days=3)
+        created_at=now - timedelta(days=2)
     ),
     Ticket(
         title="Avatar alignment off",
         description="User avatar slightly misaligned",
         status="resolved",
         priority="low",
-        created_at=now - timedelta(days=9)
+        created_at=now - timedelta(days=2)
     ),
     Ticket(
         title="Payments page blank",
@@ -116,14 +116,14 @@ def seed_tickets():
         description="Admins missing edit permissions",
         status="open",
         priority="high",
-        created_at=now - timedelta(days=11)  # OVERDUE
+        created_at=now - timedelta(days=1)  
     ),
     Ticket(
         title="Export CSV broken",
         description="CSV export contains malformed data",
         status="open",
         priority="medium",
-        created_at=now - timedelta(days=4)
+        created_at=now - timedelta(days=1)
     ),
     Ticket(
         title="Loading spinner stuck",
@@ -158,21 +158,21 @@ def seed_tickets():
         description="Search delay when many users exist",
         status="open",
         priority="medium",
-        created_at=now - timedelta(days=6)  # OVERDUE
+        created_at=now - timedelta(days=6) 
     ),
     Ticket(
         title="Charts not rendering",
         description="Graphs fail in Safari browser",
         status="in_progress",
         priority="high",
-        created_at=now - timedelta(days=3)
+        created_at=now - timedelta(days=1)
     ),
     Ticket(
         title="Language switch resets state",
         description="Switching language logs user out",
         status="open",
         priority="high",
-        created_at=now - timedelta(days=9)  # OVERDUE
+        created_at=now - timedelta(days=9)  
     ),
     Ticket(
         title="Session logout randomly",
@@ -186,7 +186,7 @@ def seed_tickets():
         description="Text contrast fails WCAG guidelines",
         status="open",
         priority="low",
-        created_at=now - timedelta(hours=3)
+        created_at=now - timedelta(hours=67)
     )
 ]
 
