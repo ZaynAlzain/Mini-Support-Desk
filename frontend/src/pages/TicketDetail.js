@@ -78,7 +78,7 @@ function TicketDetail() {
         <ul>
           {comments.map(c => (
             <li key={c.id}>
-              {c.content}
+              <p className="comment-body">{c.content}</p>
               <br />
               <small>
                 {new Date(c.created_at).toLocaleString()}

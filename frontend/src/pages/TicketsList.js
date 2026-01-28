@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import api from "../api/api";
 import "./TicketsList.css";
@@ -17,7 +17,7 @@ function TicketsList() {
   const [openMenuId, setOpenMenuId] = useState(null);
   const [overdueOnly, setOverdueOnly] = useState(false);
   const [page, setPage] = useState(1);
-  const limit = 5;
+  const limit = 10;
   const [total, setTotal] = useState(0);
 
 
@@ -71,10 +71,10 @@ useEffect(() => {
   };
 }, []);
 
-  const visibleTickets = tickets.filter(ticket => {
-  if (!overdueOnly) return true;
-  return isOverdue(ticket);
-  });
+ const visibleTickets = useMemo(() => {
+  if (!overdueOnly) return tickets;
+  return tickets.filter(isOverdue);
+}, [tickets, overdueOnly]);
 
   if (loading) return <p>Loading tickets...</p>;
 

@@ -56,3 +56,9 @@ h2 {
 .comments-section textarea {
   min-height: 70px;
 }
+
+.comment-body {
+  white-space: pre-wrap;      
+  word-wrap: break-word;      
+  overflow-wrap: break-word; 
+}
