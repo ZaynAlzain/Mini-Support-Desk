@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import api from "../api/api";
 import "./TicketsList.css";
@@ -9,16 +9,30 @@ function TicketsList() {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
   const [priority, setPriority] = useState("");
-  const [sort, setSort] = useState("created_at");
-  const [order, setOrder] = useState("desc");
+  const [sortMode, setSortMode] = useState("created_desc");
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true); 
   const [initialized, setInitialized] = useState(false);
   const [openMenuId, setOpenMenuId] = useState(null);
   const [overdueOnly, setOverdueOnly] = useState(false);
   const [page, setPage] = useState(1);
-  const limit = 5;
+  const limit = 10;
   const [total, setTotal] = useState(0);
+
+
+  const SORT_MODES = [
+  "created_desc",
+  "created_asc",
+  "updated_desc",
+  "updated_asc"
+];
+
+const cycleSortMode = () => {
+  setSortMode(prev => {
+    const index = SORT_MODES.indexOf(prev);
+    return SORT_MODES[(index + 1) % SORT_MODES.length];
+  });
+};
 
 
 
@@ -28,17 +42,24 @@ function TicketsList() {
     setLoading(true);
   }
 
-  api.get("/tickets", {
-    params: {
-      q: search || undefined,
-      status: status || undefined,
-      priority: priority || undefined,
-      sort,
-      order,
-      page,
-      limit
-    }
-  })
+const sortField =
+  sortMode.startsWith("created") ? "created_at" : "updated_at";
+
+const sortOrder =
+  sortMode.endsWith("asc") ? "asc" : "desc";
+
+api.get("/tickets", {
+  params: {
+    q: search || undefined,
+    status: status || undefined,
+    priority: priority || undefined,
+    overdue: overdueOnly ? "true" : undefined,
+    sort: sortField,
+    order: sortOrder,
+    page,
+    limit
+  }
+})
     .then(res => {
       setTickets(res.data.items);
       setTotal(res.data.total);
@@ -50,11 +71,11 @@ function TicketsList() {
       setInitialized(true);
     });
 
-}, [search, status, priority, sort, order, page, initialized]);
+}, [search, status, priority, sortMode, overdueOnly , page, initialized]);
 
 useEffect(() => {
   setPage(1);
-}, [search, status, priority, overdueOnly]);
+}, [search, status, priority, overdueOnly, sortMode]);
 
 const totalPages = Math.ceil(total / limit);
 
@@ -71,10 +92,7 @@ useEffect(() => {
   };
 }, []);
 
-  const visibleTickets = tickets.filter(ticket => {
-  if (!overdueOnly) return true;
-  return isOverdue(ticket);
-  });
+ const visibleTickets = tickets;
 
   if (loading) return <p>Loading tickets...</p>;
 
@@ -128,24 +146,14 @@ useEffect(() => {
 
   <div className="filters-right">
      <span className="view-label">View:</span> 
-     <button
-    className={`view-pill ${sort !== "created_at" ? "active" : ""}`}
-    onClick={() =>
-      setSort(prev =>
-        prev === "created_at" ? "updated_at" : "created_at"
-      )
-    }
+   <button
+  className="view-pill active"
+  onClick={cycleSortMode}
   >
-    {sort === "created_at" ? "Created" : "Updated"}
-  </button>
-
-    <button
-    className={`view-pill ${order === "asc" ? "active" : ""}`}
-    onClick={() =>
-      setOrder(prev => (prev === "desc" ? "asc" : "desc"))
-    }
-  >
-    {order === "desc" ? "Newest" : "Oldest"}
+  {sortMode === "created_desc" && "Created • Newest ↓"}
+  {sortMode === "created_asc" && "Created • Oldest ↑"}
+  {sortMode === "updated_desc" && "Updated • Newest ↓"}
+  {sortMode === "updated_asc" && "Updated • Oldest ↑"}
   </button>
   </div>
 
@@ -249,10 +257,15 @@ useEffect(() => {
 
                 if (window.confirm("Delete this ticket?")) {
                   api.delete(`/tickets/${ticket.id}`).then(() => {
-                    setTickets(prev =>
-                      prev.filter(t => t.id !== ticket.id)
-                    );
                     setOpenMenuId(null);
+
+  
+                  if (tickets.length === 1 && page > 1) {
+                     setPage(prev => prev - 1);
+                      } else {
+   
+                   setInitialized(false);
+                    }
                   });
                 }
               }}
