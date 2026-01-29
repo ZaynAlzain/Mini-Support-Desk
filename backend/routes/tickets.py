@@ -56,6 +56,8 @@ def get_tickets():
     total = query.count()
     tickets = query.offset((page - 1) * limit).limit(limit).all()
 
+    cutoff = datetime.utcnow() - timedelta(hours=72)
+    
     return {
         "items": [
             {
@@ -66,6 +68,7 @@ def get_tickets():
                 "priority": t.priority,
                 "created_at": t.created_at,
                 "updated_at": t.updated_at,
+                "overdue": (t.status != "resolved" and t.created_at < cutoff),
             }
             for t in tickets
         ],

@@ -150,7 +150,7 @@ function TicketsList() {
                   {ticket.status.replace("_", " ").toUpperCase()}
                 </span>
 
-                {isOverdue(ticket) && (
+                {ticket.overdue && (
                   <span className="badge overdue">OVERDUE</span>
                 )}
 
@@ -231,16 +231,6 @@ function TicketsList() {
       </div>
     </div>
   );
-}
-
-function isOverdue(ticket) {
-  if (ticket.status === "resolved") return false;
-
-  const createdAt = new Date(ticket.created_at);
-  const now = new Date();
-
-  const seventyTwoHours = 72 * 60 * 60 * 1000;
-  return now - createdAt > seventyTwoHours;
 }
 
 export default TicketsList;
