@@ -5,6 +5,10 @@ backend/venv/
 backend/__pycache__/
 backend/**/*.pyc
 backend/*.db
+backend/support.db
+backend/instance/
+.pytest_cache/
+__pycache__/
 
 # Flask / environment
 .env

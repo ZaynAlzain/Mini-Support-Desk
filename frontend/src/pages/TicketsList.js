@@ -28,7 +28,7 @@ function TicketsList() {
     setPage(1);
   }, [search, status, priority, overdueOnly]);
 
-  const { tickets, total, loading, setTickets } = useTickets({
+  const { tickets, total, loading, setTickets, refetch } = useTickets({
     q: debouncedSearch || undefined,
     status: status || undefined,
     priority: priority || undefined,
@@ -189,6 +189,12 @@ function TicketsList() {
                         if (window.confirm("Delete this ticket?")) {
                           api.delete(`/tickets/${ticket.id}`).then(() => {
                             setOpenMenuId(null);
+
+                            setTickets((prev) =>
+                              prev.filter((t) => t.id !== ticket.id),
+                            );
+
+                            refetch();
 
                             if (tickets.length === 1 && page > 1) {
                               setPage((prev) => prev - 1);
