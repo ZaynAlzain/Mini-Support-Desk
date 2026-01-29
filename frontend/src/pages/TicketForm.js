@@ -19,8 +19,9 @@ function TicketForm() {
   useEffect(() => {
     if (isEdit) {
       setLoading(true);
-      api.get(`/tickets/${id}`)
-        .then(res => {
+      api
+        .get(`/tickets/${id}`)
+        .then((res) => {
           setTitle(res.data.title);
           setDescription(res.data.description || "");
           setPriority(res.data.priority);
@@ -37,15 +38,13 @@ function TicketForm() {
       title,
       description,
       priority,
-      status
+      status,
     };
 
     if (isEdit) {
-      api.put(`/tickets/${id}`, payload)
-        .then(() => navigate(`/tickets/${id}`));
+      api.put(`/tickets/${id}`, payload).then(() => navigate(`/tickets/${id}`));
     } else {
-      api.post("/tickets", payload)
-        .then(() => navigate("/"));
+      api.post("/tickets", payload).then(() => navigate("/"));
     }
   };
 
@@ -53,38 +52,48 @@ function TicketForm() {
 
   return (
     <div className="container">
-    <form onSubmit={handleSubmit}>
-      <h2>{isEdit ? "Edit Ticket" : "Create Ticket"}</h2>
+      <form onSubmit={handleSubmit}>
+        <h2>{isEdit ? "Edit Ticket" : "Create Ticket"}</h2>
 
-      <input className="input"
-        placeholder="Title"
-        value={title}
-        onChange={e => setTitle(e.target.value)}
-        required
-      />
+        <input
+          className="input"
+          placeholder="Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          required
+        />
 
-      <textarea className="input"
-        placeholder="Description"
-        value={description}
-        onChange={e => setDescription(e.target.value)}
-      />
+        <textarea
+          className="input"
+          placeholder="Description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
 
-      <select className="input" value={priority} onChange={e => setPriority(e.target.value)}>
-        <option value="low">Low</option>
-        <option value="medium">Medium</option>
-        <option value="high">High</option>
-      </select>
+        <select
+          className="input"
+          value={priority}
+          onChange={(e) => setPriority(e.target.value)}
+        >
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+        </select>
 
-      <select className="input"value={status} onChange={e => setStatus(e.target.value)}>
-        <option value="open">Open</option>
-        <option value="in_progress">In Progress</option>
-        <option value="resolved">Resolved</option>
-      </select>
+        <select
+          className="input"
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+        >
+          <option value="open">Open</option>
+          <option value="in_progress">In Progress</option>
+          <option value="resolved">Resolved</option>
+        </select>
 
-      <button className="button primary" type="submit">
-        {isEdit ? "Update Ticket" : "Create Ticket"}
-      </button>
-    </form>
+        <button className="button primary" type="submit">
+          {isEdit ? "Update Ticket" : "Create Ticket"}
+        </button>
+      </form>
     </div>
   );
 }

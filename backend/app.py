@@ -16,6 +16,7 @@ migrate = Migrate(app, db)
 app.register_blueprint(tickets_bp)
 app.register_blueprint(comments_bp)
 
+
 @app.route("/")
 def home():
     return {"message": "Backend running"}
