@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 
 tickets_bp = Blueprint("tickets", __name__)
 
+
 @tickets_bp.route("/api/tickets", methods=["GET"])
 def get_tickets():
     query = Ticket.query
@@ -12,8 +13,7 @@ def get_tickets():
     q = request.args.get("q")
     if q:
         query = query.filter(
-            Ticket.title.ilike(f"%{q}%") |
-            Ticket.description.ilike(f"%{q}%")
+            Ticket.title.ilike(f"%{q}%") | Ticket.description.ilike(f"%{q}%")
         )
 
     # FILTERS
@@ -45,40 +45,34 @@ def get_tickets():
     if overdue == "true":
         cutoff = datetime.utcnow() - timedelta(hours=72)
 
-        query = query.filter(
-            Ticket.status != "resolved",
-            Ticket.created_at < cutoff
-        )
+        query = query.filter(Ticket.status != "resolved", Ticket.created_at < cutoff)
 
     # Pagination
     try:
         page = int(request.args.get("page", 1))
         limit = int(request.args.get("limit", 5))
     except ValueError:
-     return {"error": "Invalid pagination parameters"}, 400
+        return {"error": "Invalid pagination parameters"}, 400
     total = query.count()
     tickets = query.offset((page - 1) * limit).limit(limit).all()
 
     return {
         "items": [
-                {
-                    "id": t.id,
-                    "title": t.title,
-                    "description": t.description,
-                    "status": t.status,
-                    "priority": t.priority,
-                    "created_at": t.created_at,
-                    "updated_at": t.updated_at
-                }
-                for t in tickets
-            ],
-            "page": page,
-            "limit": limit,
-            "total": total
-        }, 200
-    
-
-   
+            {
+                "id": t.id,
+                "title": t.title,
+                "description": t.description,
+                "status": t.status,
+                "priority": t.priority,
+                "created_at": t.created_at,
+                "updated_at": t.updated_at,
+            }
+            for t in tickets
+        ],
+        "page": page,
+        "limit": limit,
+        "total": total,
+    }, 200
 
 
 @tickets_bp.route("/api/tickets/<int:ticket_id>", methods=["GET"])
@@ -95,8 +89,9 @@ def get_ticket(ticket_id):
         "status": ticket.status,
         "priority": ticket.priority,
         "created_at": ticket.created_at,
-        "updated_at": ticket.updated_at
+        "updated_at": ticket.updated_at,
     }, 200
+
 
 @tickets_bp.route("/api/tickets/<int:ticket_id>", methods=["DELETE"])
 def delete_ticket(ticket_id):
@@ -122,16 +117,14 @@ def create_ticket():
         title=data["title"],
         description=data.get("description", ""),
         status=data.get("status", "open"),
-        priority=data.get("priority", "medium")
+        priority=data.get("priority", "medium"),
     )
 
     db.session.add(ticket)
     db.session.commit()
 
-    return {
-        "id": ticket.id,
-        "message": "Ticket created"
-    }, 201
+    return {"id": ticket.id, "message": "Ticket created"}, 201
+
 
 @tickets_bp.route("/api/tickets/<int:ticket_id>", methods=["PUT"])
 def update_ticket(ticket_id):
@@ -163,9 +156,4 @@ def update_ticket(ticket_id):
 
     db.session.commit()
 
-    return {
-        "message": "Ticket updated",
-        "id": ticket.id
-    }, 200
-
-
+    return {"message": "Ticket updated", "id": ticket.id}, 200

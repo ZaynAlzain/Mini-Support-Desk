@@ -3,6 +3,7 @@ from datetime import datetime
 
 db = SQLAlchemy()
 
+
 class Ticket(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120), nullable=False)
@@ -10,8 +11,13 @@ class Ticket(db.Model):
     status = db.Column(db.String(20), default="open")
     priority = db.Column(db.String(20), default="medium")
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    comments = db.relationship("Comment", backref="ticket", lazy=True, cascade="all, delete-orphan")
+    updated_at = db.Column(
+        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+    )
+    comments = db.relationship(
+        "Comment", backref="ticket", lazy=True, cascade="all, delete-orphan"
+    )
+
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
