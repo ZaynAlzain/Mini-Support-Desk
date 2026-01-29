@@ -1,4 +1,5 @@
-import { useEffect, useState, useMemo } from "react";
+import { useDebounce } from "../hooks/useDebounce";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../api/api";
 import "./TicketsList.css";
@@ -7,6 +8,7 @@ import "./TicketsList.css";
 
 function TicketsList() {
   const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 200);
   const [status, setStatus] = useState("");
   const [priority, setPriority] = useState("");
   const [sortMode, setSortMode] = useState("created_desc");
@@ -50,7 +52,7 @@ const sortOrder =
 
 api.get("/tickets", {
   params: {
-    q: search || undefined,
+    q: debouncedSearch || undefined,
     status: status || undefined,
     priority: priority || undefined,
     overdue: overdueOnly ? "true" : undefined,
@@ -71,7 +73,7 @@ api.get("/tickets", {
       setInitialized(true);
     });
 
-}, [search, status, priority, sortMode, overdueOnly , page, initialized]);
+}, [debouncedSearch, status, priority, sortMode, overdueOnly , page, initialized]);
 
 useEffect(() => {
   setPage(1);
