@@ -51,9 +51,11 @@ def get_tickets():
         )
 
     # Pagination
-    page = int(request.args.get("page", 1))
-    limit = int(request.args.get("limit", 5))
-
+    try:
+        page = int(request.args.get("page", 1))
+        limit = int(request.args.get("limit", 5))
+    except ValueError:
+     return {"error": "Invalid pagination parameters"}, 400
     total = query.count()
     tickets = query.offset((page - 1) * limit).limit(limit).all()
 
