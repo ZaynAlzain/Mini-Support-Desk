@@ -21,6 +21,7 @@ function TicketsList() {
   const [page, setPage] = useState(1);
   const limit = 10;
   const searchInputRef = useRef(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
 
   const { sortField, sortOrder, label, cycleSortMode } = useSortMode();
 
@@ -49,7 +50,6 @@ function TicketsList() {
 
   return (
     <div className="container">
-
       <div className="page-header">
         <div>
           <h1>Tickets</h1>
@@ -73,8 +73,6 @@ function TicketsList() {
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
-
-          
 
           <select
             className="filter-select"
@@ -210,22 +208,8 @@ function TicketsList() {
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-
-                        if (window.confirm("Delete this ticket?")) {
-                          api.delete(`/tickets/${ticket.id}`).then(() => {
-                            setOpenMenuId(null);
-
-                            setTickets((prev) =>
-                              prev.filter((t) => t.id !== ticket.id),
-                            );
-
-                            refetch();
-
-                            if (tickets.length === 1 && page > 1) {
-                              setPage((prev) => prev - 1);
-                            }
-                          });
-                        }
+                        setOpenMenuId(null);
+                        setDeleteTarget(ticket);
                       }}
                     >
                       🗑️ Delete
@@ -254,6 +238,48 @@ function TicketsList() {
           Next
         </button>
       </div>
+
+      {deleteTarget && (
+        <div className="modal-backdrop">
+          <div className="modal">
+            <h3>Delete ticket?</h3>
+            <p>
+              Are you sure you want to delete{" "}
+              <strong>{deleteTarget.title}</strong>? This action cannot be
+              undone.
+            </p>
+
+            <div className="modal-actions">
+              <button
+                className="modal-cancel"
+                onClick={() => setDeleteTarget(null)}
+              >
+                Cancel
+              </button>
+
+              <button
+                className="modal-confirm"
+                onClick={() => {
+                  api.delete(`/tickets/${deleteTarget.id}`).then(() => {
+                    setTickets((prev) =>
+                      prev.filter((t) => t.id !== deleteTarget.id),
+                    );
+
+                    if (tickets.length === 1 && page > 1) {
+                      setPage((prev) => prev - 1);
+                    }
+
+                    setDeleteTarget(null);
+                    refetch();
+                  });
+                }}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
