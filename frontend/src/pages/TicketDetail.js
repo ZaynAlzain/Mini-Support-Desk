@@ -42,63 +42,82 @@ function TicketDetail() {
 
   return (
     <div className="container">
-      <Link to="/">← Back to tickets</Link>
+      <Link to="/" className="back-link">
+        ← Back to tickets
+      </Link>
 
-      <h2 className="ticket-title">{ticket.title}</h2>
+      <div className="detail-card">
+        <div className="detail-header">
+          <div className="detail-badges">
+            <span className={`badge status ${ticket.status}`}>
+              {ticket.status.replace("_", " ")}
+            </span>
 
-      <p className="ticket-description">
-        {ticket.description || "No description provided."}
-      </p>
+            <span className={`badge ${ticket.priority}`}>
+              {ticket.priority}
+            </span>
 
-      <div className="ticket-meta" style={{ marginBottom: "10px" }}>
-        <span className={`badge status ${ticket.status}`}>
-          {ticket.status.replace("_", " ").toUpperCase()}
-        </span>
+            {ticket.overdue && (
+              <span className="badge overdue">⏰ Overdue</span>
+            )}
+          </div>
 
-        <span className={`badge ${ticket.priority}`}>
-          {ticket.priority.toUpperCase()}
-        </span>
+          <Link to={`/tickets/${id}`} className="edit-button">
+            ✏️ Edit
+          </Link>
+        </div>
+
+        <h1 className="detail-title">{ticket.title}</h1>
+
+        <div className="detail-dates">
+          <span>
+            📅 Created {new Date(ticket.created_at).toLocaleDateString()}
+          </span>
+          <span>
+            🕒 Updated {new Date(ticket.updated_at).toLocaleDateString()}
+          </span>
+        </div>
       </div>
 
-      <p className="ticket-date">
-        <strong>Created:</strong> {new Date(ticket.created_at).toLocaleString()}
-      </p>
-
-      <hr />
-
-      <div className="comments-section">
-        <h3>Comments</h3>
+      <div className="detail-card">
+        <h3>Description</h3>
+        <p className="detail-description">
+          {ticket.description || "No description provided."}
+        </p>
       </div>
-      {comments.length === 0 ? (
-        <p>No comments yet.</p>
-      ) : (
-        <ul>
-          {comments.map((c) => (
-            <li key={c.id}>
-              <p className="comment-body">{c.content}</p>
-              <br />
-              <small>{new Date(c.created_at).toLocaleString()}</small>
-            </li>
-          ))}
-        </ul>
-      )}
 
-      <form onSubmit={handleAddComment}>
-        <textarea
-          className="input"
-          placeholder="Add a comment..."
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-        />
+      <div className="detail-card">
+        <h3>Comments ({comments.length})</h3>
 
-        <button className="button primary" type="submit">
-          Add Comment
-        </button>
-      </form>
+        {comments.length === 0 ? (
+          <p className="empty-text">No comments yet.</p>
+        ) : (
+          <div className="comments-list">
+            {comments.map((c) => (
+              <div key={c.id} className="comment-item">
+                <div className="comment-header">
+                  <strong>User</strong>
+                  <span>{new Date(c.created_at).toLocaleString()}</span>
+                </div>
 
-      <hr />
+                <p>{c.content}</p>
+              </div>
+            ))}
+          </div>
+        )}
 
-      <Link to={`/tickets/${id}/edit`}>✏️ Edit Ticket</Link>
+        <form onSubmit={handleAddComment} className="comment-form">
+          <textarea
+            placeholder="Add a comment..."
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+          />
+
+          <button type="submit" className="button primary">
+            ➤ Add Comment
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
