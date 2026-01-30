@@ -62,8 +62,8 @@ function TicketDetail() {
             )}
           </div>
 
-          <Link to={`/tickets/${id}`} className="edit-button">
-            ✏️ Edit
+          <Link to={`/tickets/${id}/edit`} className="edit-button">
+             Edit
           </Link>
         </div>
 

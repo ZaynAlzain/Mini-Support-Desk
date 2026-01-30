@@ -12,7 +12,7 @@
 }
 
 .primary-button {
-  background-color: #6f68f6a5;
+  background-color: #2563eb;
   color: rgb(55, 27, 27);
   padding: 10px 16px;
   border-radius: 8px;
@@ -27,7 +27,7 @@
 }
 
 .primary-button:hover {
-  background-color: #28346c;
+  background-color: #6c82e7;
 }
 
 .search-wrapper {
@@ -35,9 +35,9 @@
 }
 
 .search-input {
-  width: 200px;
+  width: 180px;
   height: 36px;
-  padding: 0 10px;
+  padding: 0 8px;
   font-size: 14px;
   border-radius: 8px;
 }
@@ -126,6 +126,7 @@ h1 {
   padding: 0 10px;
   font-size: 13px;
   border-radius: 8px;
+ 
 }
 
 .filter-select.active {
@@ -138,8 +139,8 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
-  gap: 20px;
+  padding: 11px 16px;
+  gap: 12px;
   background-color: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: 10px;
@@ -148,14 +149,13 @@ h1 {
 .filters-label {
   font-size: 14px;
   color: #64748b;
-  margin-right: 8px;
   font-weight: 500;
 }
 
 .sort-label {
   font-size: 13px;
   color: #64748b;
-  margin-right: 2px;
+  margin-right: 5px;
   white-space: nowrap;
 }
 
@@ -178,14 +178,14 @@ h1 {
 .filters-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 11px;
   flex-shrink: 0;
 }
 
 .filters-right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: px;
 }
 
 .filters-right button {
@@ -364,3 +364,28 @@ h1 {
 .modal-confirm:hover {
   background: #b91c1c;
 }
+
+.word-wrap {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: normal;
+}
+
+.sort-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sort-select {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 32px;
+  padding: 0 4px;
+  font-size: 13px;
+  border-radius: 8px;
+  box-shadow: none;
+  min-width: 140px;
+}
+

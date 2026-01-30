@@ -23,11 +23,12 @@ function TicketsList() {
   const searchInputRef = useRef(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
 
-  const { sortField, sortOrder, label, cycleSortMode } = useSortMode();
+  const { sortMode, setSortMode, sortField, sortOrder, options } =
+    useSortMode();
 
   useEffect(() => {
     setPage(1);
-  }, [search, status, priority, overdueOnly]);
+  }, [search, status, priority, overdueOnly, sortMode]);
 
   const { tickets, total, loading, setTickets, refetch } = useTickets({
     q: debouncedSearch || undefined,
@@ -108,9 +109,18 @@ function TicketsList() {
 
         <div className="filters-right">
           <span className="sort-label">Sort by:</span>
-          <button className="sort-button" onClick={cycleSortMode}>
-            {label}
-          </button>
+
+          <select
+            className="sort-select"
+            value={sortMode}
+            onChange={(e) => setSortMode(e.target.value)}
+          >
+            {options.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
       <div className="active-filters">
@@ -162,12 +172,15 @@ function TicketsList() {
               key={ticket.id}
             >
               <div className="ticket-title-cell">
-                <Link to={`/tickets/${ticket.id}`} className="ticket-title">
+                <Link
+                  to={`/tickets/${ticket.id}`}
+                  className="ticket-title word-wrap"
+                >
                   {ticket.title}
                 </Link>
 
                 {ticket.overdue && (
-                  <span className="badge overdue">⏰ Overdue</span>
+                  <span className="badge overdue">Overdue</span>
                 )}
               </div>
 

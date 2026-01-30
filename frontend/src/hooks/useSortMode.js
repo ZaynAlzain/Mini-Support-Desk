@@ -1,21 +1,14 @@
 import { useState, useMemo } from "react";
 
-const SORT_MODES = [
-  "created_desc",
-  "created_asc",
-  "updated_desc",
-  "updated_asc",
+const SORT_OPTIONS = [
+  { value: "created_desc", label: "Created • Newest" },
+  { value: "created_asc", label: "Created • Oldest" },
+  { value: "updated_desc", label: "Updated • Newest" },
+  { value: "updated_asc", label: "Updated • Oldest" },
 ];
 
 export function useSortMode(initial = "created_desc") {
   const [sortMode, setSortMode] = useState(initial);
-
-  const cycleSortMode = () => {
-    setSortMode((prev) => {
-      const index = SORT_MODES.indexOf(prev);
-      return SORT_MODES[(index + 1) % SORT_MODES.length];
-    });
-  };
 
   const { sortField, sortOrder, label } = useMemo(() => {
     const sortField = sortMode.startsWith("created")
@@ -24,21 +17,21 @@ export function useSortMode(initial = "created_desc") {
 
     const sortOrder = sortMode.endsWith("asc") ? "asc" : "desc";
 
-    const labelMap = {
-      created_desc: "Created • Newest",
-      created_asc: "Created • Oldest",
-      updated_desc: "Updated • Newest",
-      updated_asc: "Updated • Oldest",
-    };
+    const current = SORT_OPTIONS.find(o => o.value === sortMode);
 
-    return { sortField, sortOrder, label: labelMap[sortMode] };
+    return {
+      sortField,
+      sortOrder,
+      label: current?.label ?? "Created • Newest",
+    };
   }, [sortMode]);
 
   return {
     sortMode,
-    cycleSortMode,
+    setSortMode, 
     sortField,
     sortOrder,
     label,
+    options: SORT_OPTIONS,
   };
 }

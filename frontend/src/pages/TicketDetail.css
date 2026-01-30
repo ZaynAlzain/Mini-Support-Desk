@@ -154,3 +154,12 @@ h2 {
   border-radius: 8px;
   border: 1px solid #d1d5db;
 }
+
+
+.detail-title,
+.detail-description,
+.comment-item p {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: normal;
+}
