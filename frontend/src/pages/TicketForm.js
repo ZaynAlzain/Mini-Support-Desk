@@ -52,47 +52,77 @@ function TicketForm() {
 
   return (
     <div className="container">
-      <form onSubmit={handleSubmit}>
-        <h2>{isEdit ? "Edit Ticket" : "Create Ticket"}</h2>
+      <form onSubmit={handleSubmit} className="ticket-form">
+        <div className="form-header">
+          <h2>{isEdit ? "Edit Ticket" : "Create New Ticket"}</h2>
+          <p className="form-subtitle">
+            Fill in the details to {isEdit ? "update" : "create"} a support
+            ticket.
+          </p>
+        </div>
 
-        <input
-          className="input"
-          placeholder="Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-        />
+        <div className="form-group">
+          <label>Title</label>
+          <input
+            className="input"
+            placeholder="Enter ticket title..."
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+          />
+        </div>
 
-        <textarea
-          className="input"
-          placeholder="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
+        <div className="form-group">
+          <label>Description</label>
+          <textarea
+            className="textarea"
+            placeholder="Describe the issue or request..."
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+        </div>
 
-        <select
-          className="input"
-          value={priority}
-          onChange={(e) => setPriority(e.target.value)}
-        >
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
-        </select>
+        <div className="form-row">
+          <div className="form-group">
+            <label>Priority</label>
+            <select
+              className="input"
+              value={priority}
+              onChange={(e) => setPriority(e.target.value)}
+            >
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
 
-        <select
-          className="input"
-          value={status}
-          onChange={(e) => setStatus(e.target.value)}
-        >
-          <option value="open">Open</option>
-          <option value="in_progress">In Progress</option>
-          <option value="resolved">Resolved</option>
-        </select>
+          <div className="form-group">
+            <label>Status</label>
+            <select
+              className="input"
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+            >
+              <option value="open">Open</option>
+              <option value="in_progress">In Progress</option>
+              <option value="resolved">Resolved</option>
+            </select>
+          </div>
+        </div>
 
-        <button className="button primary" type="submit">
-          {isEdit ? "Update Ticket" : "Create Ticket"}
-        </button>
+        <div className="form-actions">
+          <button
+            type="button"
+            className="button secondary"
+            onClick={() => navigate(-1)}
+          >
+            Cancel
+          </button>
+
+          <button className="button primary" type="submit">
+            {isEdit ? "Update Ticket" : "Create Ticket"}
+          </button>
+        </div>
       </form>
     </div>
   );
