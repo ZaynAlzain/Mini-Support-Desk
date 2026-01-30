@@ -25,10 +25,10 @@ export function useSortMode(initial = "created_desc") {
     const sortOrder = sortMode.endsWith("asc") ? "asc" : "desc";
 
     const labelMap = {
-      created_desc: "Created • Newest ↓",
-      created_asc: "Created • Oldest ↑",
-      updated_desc: "Updated • Newest ↓",
-      updated_asc: "Updated • Oldest ↑",
+      created_desc: "Created • Newest",
+      created_asc: "Created • Oldest",
+      updated_desc: "Updated • Newest",
+      updated_asc: "Updated • Oldest",
     };
 
     return { sortField, sortOrder, label: labelMap[sortMode] };

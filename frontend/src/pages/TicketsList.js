@@ -49,54 +49,68 @@ function TicketsList() {
 
   return (
     <div className="container">
-      <h1>Tickets</h1>
 
-      <Link to="/new" style={{ display: "inline-block", marginBottom: "10px" }}>
-        ➕ Add Ticket
-      </Link>
+      <div className="page-header">
+        <div>
+          <h1>Tickets</h1>
+          <p className="page-subtitle">Manage and track support requests</p>
+        </div>
+
+        <Link to="/new" className="primary-button">
+          + New Ticket
+        </Link>
+      </div>
 
       <div className="filters-bar">
         <div className="filters-left">
-          <input
-            ref={searchInputRef}
-            placeholder="Search tickets..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+          <span className="filters-label">Filters:</span>
+          <div className="search-wrapper">
+            <input
+              ref={searchInputRef}
+              className="search-input"
+              placeholder="Search tickets..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+
+          
 
           <select
-            className={`filter-select ${status ? "active" : ""}`}
+            className="filter-select"
             value={status}
             onChange={(e) => setStatus(e.target.value)}
           >
-            <option value="">All Statuses</option>
+            <option value="">All Status</option>
             <option value="open">Open</option>
             <option value="in_progress">In Progress</option>
             <option value="resolved">Resolved</option>
           </select>
 
           <select
-            className={`filter-select ${priority ? "active" : ""}`}
+            className="filter-select"
             value={priority}
             onChange={(e) => setPriority(e.target.value)}
           >
-            <option value="">All Priorities</option>
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
+            <option value="">All Priority</option>
             <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
           </select>
 
-          <button
-            className={`filter-select ${overdueOnly ? "active" : ""}`}
-            onClick={() => setOverdueOnly((prev) => !prev)}
+          <select
+            className="filter-select"
+            value={overdueOnly ? "overdue" : ""}
+            onChange={(e) => setOverdueOnly(e.target.value === "overdue")}
           >
-            Overdue
-          </button>
+            <option value="">All Tickets</option>
+            <option value="overdue">Overdue</option>
+          </select>
         </div>
 
         <div className="filters-right">
-          <span className="view-label">View:</span>
-          <button className="view-pill active" onClick={cycleSortMode}>
+          <span className="sort-label">Sort by:</span>
+          <button className="sort-button" onClick={cycleSortMode}>
             {label}
           </button>
         </div>
@@ -135,29 +149,41 @@ function TicketsList() {
       ) : tickets.length === 0 ? (
         <p>No tickets found</p>
       ) : (
-        <ul className="ticket-list">
+        <div className="ticket-table">
+          <div className="ticket-header">
+            <span>Title</span>
+            <span>Status</span>
+            <span>Priority</span>
+            <span>Created</span>
+            <span>Actions</span>
+          </div>
+
           {visibleTickets.map((ticket) => (
-            <li
-              className={`ticket-item ${
-                openMenuId === ticket.id ? "menu-open" : ""
-              }`}
+            <div
+              className={`ticket-row ${openMenuId === ticket.id ? "menu-open" : ""}`}
               key={ticket.id}
             >
-              <div className="ticket-left">
-                <Link to={`/tickets/${ticket.id}`}>{ticket.title}</Link>
-
-                <span className={`badge status ${ticket.status}`}>
-                  {ticket.status.replace("_", " ").toUpperCase()}
-                </span>
+              <div className="ticket-title-cell">
+                <Link to={`/tickets/${ticket.id}`} className="ticket-title">
+                  {ticket.title}
+                </Link>
 
                 {ticket.overdue && (
-                  <span className="badge overdue">OVERDUE</span>
+                  <span className="badge overdue">⏰ Overdue</span>
                 )}
-
-                <span className={`badge ${ticket.priority}`}>
-                  {ticket.priority.toUpperCase()}
-                </span>
               </div>
+
+              <span className={`badge status ${ticket.status}`}>
+                {ticket.status.replace("_", " ")}
+              </span>
+
+              <span className={`badge ${ticket.priority}`}>
+                {ticket.priority}
+              </span>
+
+              <span className="ticket-date">
+                {new Date(ticket.created_at).toLocaleDateString()}
+              </span>
 
               <div className="ticket-menu">
                 <button
@@ -177,7 +203,6 @@ function TicketsList() {
                     onClick={(e) => e.stopPropagation()}
                   >
                     <Link to={`/tickets/${ticket.id}/edit`}>✏️ Edit</Link>
-
                     <Link to={`/tickets/${ticket.id}`}>💬 Add Comment</Link>
 
                     <button
@@ -208,9 +233,9 @@ function TicketsList() {
                   </div>
                 )}
               </div>
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
 
       <div className="pagination">
