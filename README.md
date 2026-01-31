@@ -57,47 +57,60 @@ Follow these steps to run the project locally.
 
 ### Step 1: Clone the repository
 
+```bash
 git clone https://github.com/ZaynAlzain/Mini-Support-Desk.git
 cd Mini-Support-Desk
-
+```
 ---
 
 ### Step 2: Create and activate a virtual environment
 
+```bash
 cd backend
 python -m venv venv
+```
 
 Activate the virtual environment:
 
 Windows:
+```bash
 venv\Scripts\activate
-
+```
 macOS / Linux:
+```basا
 source venv/bin/activate
+```
 
 ---
 
 ### Step 3: Install backend dependencies
 
+```bash
 pip install -r requirements.txt
+```
 
 ---
 
 ### Step 4: Initialize the database
 
+```bash
 flask db upgrade
+```
 
 ---
 
 ### Step 5: Seed the database
 
+```bash
 python seed.py
+```
 
 ---
 
 ### Step 6: Run the backend server
-
+```bash
 python app.py
+```
 
 Backend will run at:
 http://127.0.0.1:5000
@@ -107,15 +120,19 @@ http://127.0.0.1:5000
 ### Step 7: Install frontend dependencies
 
 Open a new terminal:
-
+```bash
 cd frontend
 npm install
+```
 
 ---
 
 ### Step 8: Run the frontend server
 
+```bash
 npm start
+```
 
 Frontend will run at:
 http://localhost:3000
+
