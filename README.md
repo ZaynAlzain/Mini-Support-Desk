@@ -1,25 +1,30 @@
-Prerequisites:
+# Mini Support Desk
 
-Make sure you have the following installed:
+A full-stack support ticketing system built with Flask and React.
 
-Required
+---
 
-Python 3.10+
+## Features
+- Create, edit, and delete tickets
+- Search, filter, and sort tickets
+- Add comments to tickets
+- Overdue ticket detection (72h SLA)
+- Server-side pagination
 
-Node.js 18+
+---
 
-npm (comes with Node.js)
+## Tech Stack
 
-Git
+### Frontend
+- React
+- React Router
+- Custom hooks
 
-Optional (Recommended)
+### Backend
+- Flask
+- SQLAlchemy
+- Flask-Migrate
+- SQLite
 
-Python virtual environment tool (venv)
+---
 
-SQLite browser (to inspect the database)
-
-You can verify your installations with:
-
-python --version
-node --version
-npm --version
