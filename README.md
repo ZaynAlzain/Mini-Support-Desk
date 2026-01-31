@@ -8,7 +8,7 @@ A full-stack support ticketing system built with Flask and React.
 - Create, edit, and delete tickets
 - Search, filter, and sort tickets
 - Add comments to tickets
-- Overdue ticket detection (72h SLA)
+- Overdue ticket detection 
 - Server-side pagination
 
 ---
@@ -28,3 +28,94 @@ A full-stack support ticketing system built with Flask and React.
 
 ---
 
+## Prerequisites
+
+Make sure you have the following installed:
+
+### Required
+- **Python** 3.10+
+- **Node.js** 18+
+- **npm**
+- **Git**
+
+### Optional
+- Python virtual environment (`venv`)
+- SQLite browser (for database inspection)
+
+Check versions:
+```bash
+python --version
+node --version
+npm --version
+```
+
+## Installation & Setup
+
+Follow these steps to run the project locally.
+
+---
+
+### Step 1: Clone the repository
+
+git clone https://github.com/ZaynAlzain/Mini-Support-Desk.git
+cd Mini-Support-Desk
+
+---
+
+### Step 2: Create and activate a virtual environment
+
+cd backend
+python -m venv venv
+
+Activate the virtual environment:
+
+Windows:
+venv\Scripts\activate
+
+macOS / Linux:
+source venv/bin/activate
+
+---
+
+### Step 3: Install backend dependencies
+
+pip install -r requirements.txt
+
+---
+
+### Step 4: Initialize the database
+
+flask db upgrade
+
+---
+
+### Step 5: Seed the database
+
+python seed.py
+
+---
+
+### Step 6: Run the backend server
+
+python app.py
+
+Backend will run at:
+http://127.0.0.1:5000
+
+---
+
+### Step 7: Install frontend dependencies
+
+Open a new terminal:
+
+cd frontend
+npm install
+
+---
+
+### Step 8: Run the frontend server
+
+npm start
+
+Frontend will run at:
+http://localhost:3000
