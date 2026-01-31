@@ -29,7 +29,7 @@ A full-stack support ticketing system built with Flask and React.
 ---
 
 ## 📄 Documentation
-- [Prompt File](prompts.md)
+- [Prompt File](PROMPTS.md)
 
 ---
 ## Prerequisites
@@ -163,6 +163,7 @@ Search input is delayed slightly to reduce unnecessary API requests. Input focus
 No external state management libraries were used to keep the project simple and appropriate for its size. Testing was kept minimal due to time constraints, but the backend structure allows tests to be added easily later.
 
 Possible future improvements include user authentication, better comment features, bulk actions on tickets, and expanded test coverage.
+
 
 
 
