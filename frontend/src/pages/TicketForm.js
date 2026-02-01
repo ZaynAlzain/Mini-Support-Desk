@@ -4,7 +4,7 @@ import api from "../api/api";
 import "./TicketForm.css";
 
 function TicketForm() {
-  const { id } = useParams(); // if exists → edit mode
+  const { id } = useParams();
   const navigate = useNavigate();
 
   const [title, setTitle] = useState("");

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import {
   useTickets,
   useSortMode,
@@ -48,6 +48,18 @@ function TicketsList() {
   useClickOutside(() => setOpenMenuId(null));
 
   const visibleTickets = tickets;
+
+  const handleDelete = useCallback((deleteTarget) => {
+    api.delete(`/tickets/${deleteTarget.id}`).then(() => {
+      setTickets((prev) => prev.filter((t) => t.id !== deleteTarget.id));
+
+      if (tickets.length === 1 && page > 1) {
+        setPage((prev) => prev - 1);
+      }
+    });
+    setDeleteTarget(null);
+    refetch();
+  }, [setTickets, tickets.length, page, refetch]);
 
   return (
     <div className="container">
@@ -270,23 +282,7 @@ function TicketsList() {
                 Cancel
               </button>
 
-              <button
-                className="modal-confirm"
-                onClick={() => {
-                  api.delete(`/tickets/${deleteTarget.id}`).then(() => {
-                    setTickets((prev) =>
-                      prev.filter((t) => t.id !== deleteTarget.id),
-                    );
-
-                    if (tickets.length === 1 && page > 1) {
-                      setPage((prev) => prev - 1);
-                    }
-
-                    setDeleteTarget(null);
-                    refetch();
-                  });
-                }}
-              >
+              <button className="modal-confirm" onClick={() => handleDelete(deleteTarget)}>
                 Delete
               </button>
             </div>
